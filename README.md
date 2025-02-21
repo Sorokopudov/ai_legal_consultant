@@ -46,7 +46,7 @@ AWS_REGION=us-west-2
    ```
 2. Запустите сервисы:
    ```sh
-   docker-compose up -d
+   docker-compose up
    ```
 3. После запуска, API будет доступно по адресу: `http://localhost:8080`
 
