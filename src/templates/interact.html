@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Юридический консультант</title>
+</head>
+<body>
+    <h1>Юридический консультант по жилищному законодательству</h1>
+    <form id="questionForm">
+        <label for="user_id">Введите ID пользователя:</label><br>
+        <input type="text" id="user_id" name="user_id" required><br><br>
+
+        <label for="question">Введите ваш вопрос:</label><br>
+        <textarea id="question" name="question" rows="4" cols="50" required></textarea><br><br>
+
+        <label for="use_user_info">Использовать информацию о пользователе:</label>
+        <input type="checkbox" id="use_user_info" name="use_user_info" checked><br><br>
+
+        <label for="use_knowledge_base">Использовать базу знаний (Жилищный кодекс РФ):</label>
+        <input type="checkbox" id="use_knowledge_base" name="use_knowledge_base" checked><br><br>
+
+        <label for="use_conversation_history">Использовать историю диалога:</label>
+        <input type="checkbox" id="use_conversation_history" name="use_conversation_history" checked><br><br>
+
+        <button type="button" onclick="submitQuestionForm()">Задать вопрос</button>
+    </form>
+
+    <h2>Ответ консультанта:</h2>
+    <div id="answer">
+        <p>Ответ появится здесь...</p>
+    </div>
+
+    <h2>Метаданные:</h2>
+    <div id="metadata">
+        <p>Метаданные появятся здесь...</p>
+    </div>
+
+    <!-- JavaScript код -->
+    <script>
+        async function submitQuestionForm() {
+            const form = document.getElementById('questionForm');
+
+            const data = {
+                user_id: form.user_id.value,
+                question: form.question.value,
+                use_user_info: form.use_user_info.checked,
+                use_knowledge_base: form.use_knowledge_base.checked,
+                use_conversation_history: form.use_conversation_history.checked
+            };
+
+            console.log("Отправляемые данные:", data);
+
+            try {
+                const response = await fetch('/process_question', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log("Ответ от сервера:", response);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log("Данные от сервера:", result);
+
+                    document.getElementById('answer').innerHTML = `<p>${result.answer}</p>`;
+
+                    document.getElementById('metadata').innerHTML = `
+                        <p><strong>Системный промпт:</strong></p>
+                        <pre>${result.metadata.system_prompt}</pre>
+                        <p><strong>Пользовательский промпт:</strong></p>
+                        <pre>${result.metadata.user_prompt}</pre>
+                        <p><strong>Входящие токены:</strong> ${result.metadata.input_tokens}</p>
+                        <p><strong>Исходящие токены:</strong> ${result.metadata.output_tokens}</p>
+                    `;
+
+                    // Очистка только вопроса
+                    form.question.value = '';
+                } else {
+                    const error = await response.json();
+                    alert(`Ошибка: ${error.detail || 'Неизвестная ошибка'}`);
+                }
+            } catch (err) {
+                console.error("Ошибка подключения:", err);
+                alert('Ошибка подключения к серверу.');
+            }
+        }
+    </script>
+</body>
+</html>

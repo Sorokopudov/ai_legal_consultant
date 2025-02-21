@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список пользователей</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .conversation-history {
+            max-height: 250px; /* Увеличим высоту, чтобы вместить summary */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background-color: #f9f9f9;
+        }
+        .block-separator {
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        .label {
+            font-weight: bold;
+        }
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список пользователей</h1>
+    <form method="get" action="/add_user">
+        <button type="submit">Добавить пользователя</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>ID пользователя</th>
+                <th>Имя</th>
+                <th>Дата рождения</th>
+                <th>Дополнительная информация</th>
+                <th>История диалога</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user['id'] }}</td>
+                <td>{{ user['name'] }}</td>
+                <td>{{ user['birthday'] }}</td>
+                <td>{{ user['user_info'] }}</td>
+                <td>
+                    <div class="conversation-history">
+                        {% if user['conversation_history'] %}
+                            {% set conv_data = user['conversation_history'] %}
+
+                            {# 1. Выводим список сообщений #}
+                            {% if conv_data['messages'] %}
+                                {% for msg in conv_data['messages'] %}
+                                    <p><strong>{{ msg.role }}:</strong> {{ msg.message }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p>- (Сообщений нет)</p>
+                            {% endif %}
+
+                            <div class="block-separator"></div>
+
+                            {# 2. Выводим сжатое изложение диалога, если есть #}
+                            {% if conv_data['summarized_dialog'] %}
+                                <p><span class="label">Сжатое изложение:</span> {{ conv_data['summarized_dialog'] }}</p>
+                            {% else %}
+                                <p>- (Сжатое изложение отсутствует)</p>
+                            {% endif %}
+
+                            <div class="block-separator"></div>
+
+                            {# 3. Выводим последнее взаимодействие, если есть #}
+                            {% if conv_data['last_interaction'] %}
+                                <p><span class="label">Последний вопрос:</span> {{ conv_data['last_interaction'].question }}</p>
+                                <p><span class="label">Последний ответ:</span> {{ conv_data['last_interaction'].answer }}</p>
+                            {% else %}
+                                <p>- (Нет данных о последнем взаимодействии)</p>
+                            {% endif %}
+                        {% else %}
+                            <p>-</p>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

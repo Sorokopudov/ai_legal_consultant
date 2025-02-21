@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить/обновить пользователя</title>
+</head>
+<body>
+    <h2>Добавить/обновить пользователя</h2>
+    <form id="userForm">
+        <label for="user_id">ID пользователя:</label><br>
+        <input type="text" id="user_id" name="user_id" required><br><br>
+
+        <label for="name">Имя:</label><br>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="birthday">Дата рождения:</label><br>
+        <input type="date" id="birthday" name="birthday"><br><br>
+
+        <label for="user_info">Дополнительная информация о пользователе:</label><br>
+        <textarea id="user_info" name="user_info" rows="4" style="width: 100%;"></textarea><br><br>
+
+        <button type="button" onclick="submitUserForm()">Сохранить</button>
+    </form>
+
+    <script>
+        async function submitUserForm() {
+            const form = document.getElementById('userForm');
+
+            // Формируем объект данных, исключая пустые поля
+            const data = {
+                user_id: form.user_id.value,
+            };
+            if (form.name.value) data.name = form.name.value;
+            if (form.birthday.value) data.birthday = form.birthday.value;
+            if (form.user_info.value) data.user_info = form.user_info.value;
+
+            try {
+                const response = await fetch('/add_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Перенаправление на страницу пользователей после успешного добавления
+                    window.location.href = '/users';
+                } else {
+                    const error = await response.json();
+                    alert(`Ошибка: ${error.detail || 'Неизвестная ошибка'}`);
+                }
+            } catch (err) {
+                alert('Ошибка подключения к серверу.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о процессе</title>
+</head>
+<body>
+    <h1>Добро пожаловать в юридический консультант!</h1>
+    <p>Используйте <strong>POST</strong> запрос на <code>/process/</code> для обработки вопросов.</p>
+    <h2>Пример тела POST запроса:</h2>
+    <pre>
+{
+    "user_id": "example_user",
+    "message_id": 123,
+    "message": "Пример юридического вопроса",
+    "use_user_info": true,
+    "use_knowledge_base": true
+}
+    </pre>
+    <p>Для получения дополнительной информации перейдите на <a href="/docs">документацию</a>.</p>
+</body>
+</html>
