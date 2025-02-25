@@ -195,7 +195,7 @@ async def get_user_data_from_db(user_id: str) -> dict:
                 "id": user_data.get("user_id", {}).get("S", ""),
                 "name": user_data.get("name", {}).get("S", ""),
                 "birthday": user_data.get("birthday", {}).get("S", ""),
-                "health_diary": user_data.get("health_diary", {}).get("S", ""),
+                "user_info": user_data.get("user_info", {}).get("S", ""),
                 "conversation_history": conversation_history
             }
     except ClientError as e:
@@ -374,7 +374,6 @@ async def process_question(request: Request, payload: dict = Body(...)):
                 f"Имя: {user_data.get('name', '')}\n"
                 f"Дата рождения: {user_data.get('birthday', '')}\n"
                 f"Дополнительная информация: {user_data.get('user_info', '')}\n\n"
-                f"Дополнительная информация: {user_data.get('user_info', '')}\n\n"
             )
 
         #   2.2. Используем историю диалога (если включено use_conversation_history)
@@ -441,7 +440,7 @@ async def process_question(request: Request, payload: dict = Body(...)):
                     "user_id": {"S": user_id},
                     "name": {"S": user_data.get("name", "")},
                     "birthday": {"S": user_data.get("birthday", "")},
-                    "health_diary": {"S": user_data.get("health_diary", "")},
+                    "user_info": {"S": user_data.get("user_info", "")},
                     "conversation_history": {"S": json.dumps(conversation_data)}
                 }
             )
