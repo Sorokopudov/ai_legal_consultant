@@ -238,6 +238,8 @@ async def get_users(request: Request):
                 "conversation_history": conversation_history  # Загружаем всю сохраненную историю диалога
             })
 
+        formatted_users = sorted(formatted_users, key=lambda x: int(x.get("id", 0)))
+
         return templates.TemplateResponse("users_table.html", {"request": request, "users": formatted_users})
     except Exception as e:
         logger.error(f"Ошибка при получении списка пользователей: {e}")
